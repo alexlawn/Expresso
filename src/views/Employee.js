@@ -3,6 +3,9 @@ import { withRouter } from "react-router-dom";
 
 import Expresso from '../utils/Expresso';
 
+const sqlite3 = require('sqlite3');
+const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
+
 class Employee extends Component {
   constructor(props) {
     super(props);
