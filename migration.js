@@ -3,36 +3,16 @@ const db = new sqlite3.Database('./database.sqlite');
 
 db.serialize(() => {
     db.run("DROP TABLE IF EXISTS Employee");
-    db.run("CREATE TABLE Employee ()");
+    db.run("CREATE TABLE Employee (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, position TEXT NOT NULL, wage INTEGER NOT NULL, is_current_employee INTEGER NOT NULL DEFAULT 1)");
 
     db.run("DROP TABLE IF EXISTS Timesheet");
-    db.run("CREATE TABLE Timesheet ()");
+    db.run("CREATE TABLE Timesheet (id INTEGER PRIMARY KEY NOT NULL, hours INTEGER NOT NULL, rate INTEGER NOT NULL, date INTEGER NOT NULL, employee_id INTEGER NOT NULL PRIMARY KEY (id), FOREIGN KEY (employee_id) REFERENCES Employee(id))");
 
     db.run("DROP TABLE IF EXISTS Menu");
-    db.run("CREATE TABLE Menu ()");
+    db.run("CREATE TABLE Menu (id INTEGER PRIMARY KEY NOT NULL, title TEXT NOT NULL)");
     
     db.run("DROP TABLE IF EXISTS MenuItem");
-    db.run("CREATE TABLE MenuItem ()");
+    db.run("CREATE TABLE MenuItem (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT, inventory INTEGER NOT NULL, price INTEGER NOT NULL, menu_id INTEGER NOT NULL, PRIMARY KEY (id), FOREIGN KEY (menu_id) REFERENCES Menu(id))");
 });
 
 
-
-
-
-
-
-
-
-/*
-db.serialize(() => {                           
-    db.run("DROP TABLE IF EXISTS Artist");
-    db.run("CREATE TABLE Artist (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, date_of_birth TEXT NOT NULL, biography TEXT NOT NULL, is_currently_employed INTEGER NOT NULL DEFAULT 1)");
-
-    db.run("DROP TABLE IF EXISTS Series");
-    db.run("CREATE TABLE Series (id INTEGER PRIMARY KEY NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL)");
-
-    db.run("DROP TABLE IF EXISTS Issue");
-    db.run("CREATE TABLE Issue (id INTEGER  NOT NULL, name TEXT NOT NULL, issue_number INTEGER NOT NULL, publication_date TEXT NOT NULL, artist_id INTEGER NOT NULL, series_id INTEGER NOT NULL, PRIMARY KEY (id), FOREIGN KEY (artist_id) REFERENCES Artist(id), FOREIGN KEY (series_id) REFERENCES Series(id))");
-  });
-  
-  */
