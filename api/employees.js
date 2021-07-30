@@ -4,6 +4,23 @@ const employeesRouter = express.Router();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 
+// This middleware function will be called whenever there is an employeeId parameter in a url
+employeesRouter.param('employeeId', (req, res, next, employeeId) => {
+    db.get('SELECT * FROM Employee WHERE Employee.id = $employeeId', 
+    {
+        $employeeId: employeeId
+    }, (err, employee) => {
+        if(err){
+            next(err);
+        } else if(employee) {
+            req.employee = employee;
+            next();
+        } else {
+            res.sendStatus(404);
+        }
+    });
+});
+
 employeesRouter.get('/', (req, res, next) => {
     db.all(`SELECT * FROM Employee WHERE Employee.is_current_employee = 1`,
     (err, employees) => {
@@ -14,6 +31,10 @@ employeesRouter.get('/', (req, res, next) => {
         }
     });
 });
+
+employeesRouter.get('/:employeeId', (req, res, next) => {
+    res.status(200).json({employee: req.employee});
+  });
 
 employeesRouter.post('/', (req, res, next) => {
     const name = req.body.employee.name;
