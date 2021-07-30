@@ -40,8 +40,8 @@ employeesRouter.post('/', (req, res, next) => {
     const name = req.body.employee.name;
     const position = req.body.employee.position;
     const wage = req.body.employee.wage;
-    const is_current_employee = req.body.employee.is_current_employee;
-    if(!name || !position || !wage || !is_current_employee) {
+    const isCurrentEmployee = req.body.employee.isCurrentEmployee === 0 ? 0 : 1;
+    if(!name || !position || !wage) {
         return res.sendStatus(400);
     } else {
         db.run(`INSERT INTO Employee (name, position, wage, is_current_employee) VALUES ($name, $position, $wage, $isCurrentEmployee)`,
@@ -57,6 +57,35 @@ employeesRouter.post('/', (req, res, next) => {
                 db.get(`SELECT * FROM Employee WHERE Employee.id = ${this.lastID}`,
                 (err, newEmployee) => {
                     res.status(201).json({employee: newEmployee});
+                });
+            }
+        });
+    }
+});
+
+employeesRouter.put('/:employeeId', (req, res, next) => {
+    const name = req.body.employee.name;
+    const position = req.body.employee.position;
+    const wage = req.body.employee.wage;
+    const isCurrentEmployee = req.body.employee.isCurrentEmployee === 0 ? 0 : 1;
+    if(!name || !position || !wage) {
+        return res.sendStatus(400);
+    } else {
+        db.run(`UPDATE Employee SET name = $name, position = $position, wage = $wage, is_current_employee = $isCurrentEmployee WHERE Employee.id = $employeeId`,
+        {
+            $name: name,
+            $position: position,
+            $wage: wage,
+            $isCurrentEmployee: isCurrentEmployee,
+            $employeeId: req.params.employeeId
+        },
+        (err) => {
+            if(err) {
+                next(err);
+            } else {
+                db.get(`SELECT * FROM Employee WHERE Employee.id = ${req.params.employeeId}`,
+                (err, updatedEmployee) => {
+                    res.status(200).json({employee: updatedEmployee});
                 });
             }
         });
