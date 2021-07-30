@@ -92,5 +92,22 @@ employeesRouter.put('/:employeeId', (req, res, next) => {
     }
 });
 
+employeesRouter.delete('/:employeeId', (req, res, next) => {
+    db.run(`UPDATE Employee SET is_current_employee = 0 WHERE Employee.id = $employeeId`,
+    {
+        $employeeId: req.params.employeeId
+    },
+    (err) => {
+        if(err) {
+            next(err);
+        } else {
+            db.get(`SELECT * FROM Employee WHERE Employee.id = ${req.params.employeeId}`,
+            (err, employeeUnemployed) => {
+                res.status(200).json({employee: employeeUnemployed});
+            });
+        }
+    });
+});
+
 
 module.exports = employeesRouter;
