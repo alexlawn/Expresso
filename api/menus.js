@@ -36,7 +36,7 @@ menusRouter.get('/:menuId', (req, res, next) => {
 });
 
 menusRouter.post('/', (req, res, next) => {
-    const title = req.body.title;
+    const title = req.body.menu.title;
     if(!title) {
         return res.sendStatus(400);
     } else {
@@ -50,7 +50,7 @@ menusRouter.post('/', (req, res, next) => {
             } else {
                 db.get(`SELECT * FROM Menu WHERE Menu.id = ${this.lastID}`,
                 (err, newMenu) => {
-                    res.sendStatus(201).json({menu: newMenu});
+                    res.status(201).json({menu: newMenu});
                 });
             }
         });
@@ -58,7 +58,7 @@ menusRouter.post('/', (req, res, next) => {
 });
 
 menusRouter.put('/:menuId', (req, res, next) => {
-    const title = req.body.title;
+    const title = req.body.menu.title;
     if(!title) {
         return res.sendStatus(400);
     } else {
