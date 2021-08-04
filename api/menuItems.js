@@ -39,14 +39,14 @@ menuItemsRouter.post('/', (req, res, next) => {
     const description = req.body.menuItem.description;
     const inventory = req.body.menuItem.inventory;
     const price = req.body.menuItem.price;
-    const menuId = req.body.menuItem.menu_id;
+    const menuId = req.params.menuId;
     db.get(`SELECT * FROM Menu WHERE Menu.id = $menuId`,
     {$menuId: menuId},
     (err, menu) => {
         if(err) {
             next(err);
         } else {
-            if (!name || !description || !inventory || !price || !menu) {
+            if (!name || !inventory || !price || !menu) {
                 return res.sendStatus(400);
         }
         db.run(`INSERT INTO MenuItem (name, description, inventory, price, menu_id) VALUES ($name, $description, $inventory, $price, $menuId)`,
@@ -55,7 +55,7 @@ menuItemsRouter.post('/', (req, res, next) => {
             $description: description,
             $inventory: inventory,
             $price: price,
-            $menuId: req.params.menuId
+            $menuId: menuId
         },
         function(err) {
             if(err) {
@@ -70,5 +70,8 @@ menuItemsRouter.post('/', (req, res, next) => {
     }
     });
 });
+
+
+
 
 module.exports = menuItemsRouter;
