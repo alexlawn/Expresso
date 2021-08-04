@@ -1,13 +1,13 @@
 const express = require('express');
-const menuItemRouter = express.Router();
+const menuItemsRouter = express.Router({mergeParams: true});
 
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 
-menuItemRouter.param('menuId', (req, res, next, menuId) => {
-    db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = $menuId`,
+menuItemsRouter.param('menuItemId', (req, res, next, menuItemId) => {
+    db.get(`SELECT * FROM MenuItem WHERE MenuItem.id = $menuItemId`,
     {
-        $menuId: menuId
+        $menuItemId: menuItemId
     },
     (err, menuItem) => {
         if(err) {
@@ -20,7 +20,7 @@ menuItemRouter.param('menuId', (req, res, next, menuId) => {
     });
 });
 
-menuItemRouter.get('/', (req, res, next) => {
+menuItemsRouter.get('/', (req, res, next) => {
     db.all(`SELECT * FROM MenuItem WHERE MenuItem.menu_id = $menuId`,
     {
         $menuId: req.params.menuId
@@ -29,9 +29,9 @@ menuItemRouter.get('/', (req, res, next) => {
         if(err) {
             next(err);
         } else {
-            res.status(200).json({menuItem: menuItem});
+            res.status(200).json({menuItems: menuItem});
         }
     });
 });
 
-module.exports = menuItemRouter;
+module.exports = menuItemsRouter;
