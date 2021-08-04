@@ -22,6 +22,8 @@ menusRouter.param('menuId', (req, res, next, menuId) => {
     });
 });
 
+menuItemRouter.use('/:menuId/menuItem', menuItemRouter);
+
 menusRouter.get('/', (req, res, next) => {
     db.all(`SELECT * FROM Menu`,
     (err, menus) => {
